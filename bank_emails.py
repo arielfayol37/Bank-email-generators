@@ -71,6 +71,7 @@ for i in range(9, num_cells):
         print(counter)
         
         break
+
 print(total_errors1)
 print(total_errors2)
 
