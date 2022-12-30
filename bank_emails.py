@@ -53,8 +53,8 @@ counter = 0
 for i in range(9, num_cells):
     counter += 1
     print(counter)
-    bank_capital = sheet['A' + str(i)].value
-    capital = sheet['D' + str(i)].value 
+    bank_name = sheet['A' + str(i)].value
+    bank_capital = sheet['D' + str(i)].value 
     extension,search_url = find_bank_domain(bank_name)
     if extension is not None:
         people_names = sheet["I" + str(i)].value 
