@@ -1,22 +1,26 @@
 import requests, re
 from bs4 import BeautifulSoup
 
-# List of bank names
- 
-search_engines_urls =  ['https://google.com/search?q='\
-                       'https://www.bing.com/search?q='\
-                      'https://search.yahoo.com/search?p='\
-                      'https://duckduckgo.com/?q='\
-                      'https://www.baidu.com/s?wd='\
-                      'https://www.ask.com/web?q'\
-                       'https://yandex.com/search/?text=']
+
+#search engines urls 
+search_engines_urls =  ['https://google.com/search?q=',\
+                       'https://www.bing.com/search?q=',\
+                      'https://search.yahoo.com/search?p=',\
+                        'https://www.ask.com/web?q',\
+                       'https://yandex.com/search/?text=',\
+                        'https://www.ecosia.org/search?q=',\
+                        'https://www.startpage.com/do/search?query=',\
+                        'https://www.baidu.com/s?wd=',\
+                        'https://www.qwant.com/?q=',\
+                        'https://search.seznam.cz/?q=',\
+                        'https://www.dogpile.com/search/web?q=',\
+                        'https://www.wolframalpha.com/input/?i=']
 
 # Dictionary to hold email formats for each bank
-email_formats = {}
+#regex for email matching
 regexEmail = re.compile(r'.{1,65}@([^\/()]{1,65}?)\.(com|org|bank|gov)')
-# Iterate through the list of bank names
-#for bank_name in bank_names:
-def find_bank_extension(bank_name, counter = 0):
+#finding domain of bank given bank name
+def find_bank_domain(bank_name, counter = 0):
       if counter <len(search_engines_urls):
           try:
               bank_name = "+".join(bank_name.upper().split())
@@ -27,9 +31,9 @@ def find_bank_extension(bank_name, counter = 0):
               search_url = search_engines_urls[counter] + search_query
               search_response = requests.get(search_url)
               if search_response.status_code == 429:
-                  return find_bank_extension(bank_name, counter+1)
+                  return find_bank_domain(bank_name, counter+1)
               search_query2 = f"{bank_name}+email+format"
-              search_url_2 = f"https://google.com/search?q={search_query}"
+              search_url_2 = search_engines_urls[counter] + search_query
               search_response_2= requests.get(search_url_2)
               
                   
@@ -41,11 +45,16 @@ def find_bank_extension(bank_name, counter = 0):
               second_result = search_soup.find_all("body")
               #print(first_result[0].get_text())
               results = regexEmail.search(first_result[0].get_text()+second_result[0].get_text())
-              return results.groups()[0]
+              return (results.group(1)+'.'+results.group(2),search_engines_urls[counter])
                
           except:
-              return None
-        else:
-            return -1
+              if counter == len(search_engines_urls):  
+                    print(search_response.status_code, search_response_2.status_code)  
+                    return (None,search_engines_urls[counter])
+              else:
+                    return find_bank_domain(bank_name, counter+1)
+      else:
+            
+          return (-1,'None')
 
      
