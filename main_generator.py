@@ -40,7 +40,7 @@ def gen_emails(people_string, extension, format ='f1'):
     
     return (names, emails, error)
 
-filename = 'bank_names_and_executives.xlsx' #Excel file containing a list of banks, their capital, and executive members
+filename = 'bank_names.xlsx' #Excel file containing a list of banks, their capital, and executive members
 wb = openpyxl.load_workbook(filename)
 sheet = wb['Screening'] #this is the sheet with the information we need
 new_wb = openpyxl.Workbook()
