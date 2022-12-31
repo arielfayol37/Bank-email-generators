@@ -24,14 +24,14 @@ def gen_emails(people_string, extension, format ='f1'):
             names.append(match1 + ' '+ match2)
             if format == 'f1':
                 
-                first_name = ''.join(match2)
-                last_name = ''.join(match1)
+                first_name = ''.join(match2.split())
+                last_name = ''.join(match1.split())
               # Generate email address and append to list
                 email = f"{first_name}.{last_name}@{extension}"
                 emails.append(email)
             elif format == 'f2':
                 first_initial = match2[0]
-                last_name = ''.join(match1)
+                last_name = ''.join(match1.split())
               # Generate email address and append to list
                 email = f"{first_initial}{last_name}@{extension}"
                 emails.append(email)                
@@ -40,19 +40,19 @@ def gen_emails(people_string, extension, format ='f1'):
     
     return (names, emails, error)
 
-filename = 'bank_names.xlsx' #Excel file containing a list of banks, their capital, and executive members
+filename = 'bank_names_and_executives.xlsx' #Excel file containing a list of banks, their capital, and executive members
 wb = openpyxl.load_workbook(filename)
 sheet = wb['Screening'] #this is the sheet with the information we need
 new_wb = openpyxl.Workbook()
 filename2 = 'emails_of_bankers.xlsx' #excel file where we will save our newly generated emails
 sheet2 = new_wb['Sheet']
 num_cells = 6065 
-cell_2_num = 2
+cell_2_num = 1505
 total_errors1 = 0
 total_errors2 = 0
 counter = 0
-for i in range(9, num_cells):
-    if i%300==0:
+for i in range(3102, num_cells):
+    if (counter+1)%300==0:
         time.sleep(1000)
     counter += 1
     print(counter)
