@@ -1,26 +1,22 @@
-import requests, re
+import requests, re, time
 from bs4 import BeautifulSoup
 
 
+
 #search engines urls 
-search_engines_urls =  ['https://google.com/search?q=',\
+search_engines_urls =  [
+                        'https://search.yahoo.com/search?p=',\
+                      'https://google.com/search?q=',\
                        'https://www.bing.com/search?q=',\
-                      'https://search.yahoo.com/search?p=',\
-                        'https://www.ask.com/web?q',\
-                       'https://yandex.com/search/?text=',\
-                        'https://www.ecosia.org/search?q=',\
-                        'https://www.startpage.com/do/search?query=',\
-                        'https://www.baidu.com/s?wd=',\
-                        'https://www.qwant.com/?q=',\
-                        'https://search.seznam.cz/?q=',\
-                        'https://www.dogpile.com/search/web?q=',\
-                        'https://www.wolframalpha.com/input/?i=']
+                        'https://www.baidu.com/s?wd=']
 
 # Dictionary to hold email formats for each bank
 #regex for email matching
+
 regexEmail = re.compile(r'.{1,65}@([^\/()]{1,65}?)\.(com|org|bank|gov|net)')
 #finding domain of bank given bank name
 def find_bank_domain(bank_name, counter = 0):
+           
       if counter <len(search_engines_urls):
           try:
               bank_name = "+".join(bank_name.upper().split())
@@ -31,8 +27,11 @@ def find_bank_domain(bank_name, counter = 0):
               search_url = search_engines_urls[counter] + search_query
               search_response = requests.get(search_url)
               if search_response.status_code == 429:
-                  search_engines_urls.pop(counter)  
-                  return find_bank_domain(bank_name, counter)
+                  #search_engines_urls.pop(counter)  
+                  return find_bank_domain(bank_name, counter+1)
+              if search_response.status_code == 500:
+                  time.sleep(1000)
+                  return find_bank_domain(bank_name, counter)    
               search_query2 = f"{bank_name}+email"
               search_url_2 = search_engines_urls[counter] + search_query
               search_response_2= requests.get(search_url_2)
@@ -46,6 +45,7 @@ def find_bank_domain(bank_name, counter = 0):
               second_result = search_soup.find_all("body")
               #print(first_result[0].get_text())
               results = regexEmail.search(first_result[0].get_text()+second_result[0].get_text())
+              
               return (results.group(1)+'.'+results.group(2),search_engines_urls[counter])
                
           except:
