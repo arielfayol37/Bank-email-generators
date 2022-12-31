@@ -7,4 +7,4 @@ In order to do so, we need the domain name of each bank, which is exactly what '
 then parses the html page to find the first email on the page, which is likely one of the emails of the bank.
 
 Then, the main program uses the function from the previous program to generate the emails, using the excel file of bank names and executive names. It
-then saves the generated emails in another excel file called "emails_of_bankers"
+then saves the generated emails in another excel file called "emails_of_bankers.xlsx"
