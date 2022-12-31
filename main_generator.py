@@ -1,6 +1,7 @@
 
 import re, openpyxl, os
-from bank_email_formats import find_bank_domain
+from bank_email_formats_finder import find_bank_domain
+import time
     
 ##Generating possible local part of people's emails using their first and last names
 def gen_emails(people_string, extension, format ='f1'):
@@ -19,8 +20,8 @@ def gen_emails(people_string, extension, format ='f1'):
         match = re.search(r'([\s\w-]*), ([\s\w-]*)', person)
         
         try:
-            match1, match2 = match.group(1), match.group(2)
-            names.append(match1 + match2)
+            match1, match2 = match.group(1).strip(), match.group(2).strip()
+            names.append(match1 + ' '+ match2)
             if format == 'f1':
                 
                 first_name = ''.join(match2)
@@ -39,7 +40,7 @@ def gen_emails(people_string, extension, format ='f1'):
     
     return (names, emails, error)
 
-filename = 'bank_names.xlsx' #Excel file containing a list of banks, their capital, and executive members
+filename = 'bank_names_and_executives.xlsx' #Excel file containing a list of banks, their capital, and executive members
 wb = openpyxl.load_workbook(filename)
 sheet = wb['Screening'] #this is the sheet with the information we need
 new_wb = openpyxl.Workbook()
@@ -51,6 +52,8 @@ total_errors1 = 0
 total_errors2 = 0
 counter = 0
 for i in range(9, num_cells):
+    if i%300==0:
+        time.sleep(1000)
     counter += 1
     print(counter)
     bank_name = sheet['A' + str(i)].value
