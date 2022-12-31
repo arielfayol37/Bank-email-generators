@@ -18,7 +18,7 @@ search_engines_urls =  ['https://google.com/search?q=',\
 
 # Dictionary to hold email formats for each bank
 #regex for email matching
-regexEmail = re.compile(r'.{1,65}@([^\/()]{1,65}?)\.(com|org|bank|gov)')
+regexEmail = re.compile(r'.{1,65}@([^\/()]{1,65}?)\.(com|org|bank|gov|net)')
 #finding domain of bank given bank name
 def find_bank_domain(bank_name, counter = 0):
       if counter <len(search_engines_urls):
@@ -27,12 +27,13 @@ def find_bank_domain(bank_name, counter = 0):
               # Search Google for the bank's website
               if "BANK" not in bank_name:
                   bank_name += '+BANK'
-              search_query = f"{bank_name}+email"
+              search_query = f"{bank_name}+email+format"
               search_url = search_engines_urls[counter] + search_query
               search_response = requests.get(search_url)
               if search_response.status_code == 429:
-                  return find_bank_domain(bank_name, counter+1)
-              search_query2 = f"{bank_name}+email+format"
+                  search_engines_urls.pop(counter)  
+                  return find_bank_domain(bank_name, counter)
+              search_query2 = f"{bank_name}+email"
               search_url_2 = search_engines_urls[counter] + search_query
               search_response_2= requests.get(search_url_2)
               
